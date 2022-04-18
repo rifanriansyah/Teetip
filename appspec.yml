@@ -4,7 +4,7 @@ files:
   - source: /
     destination: /var/www/html/public
 permissions:
-  - object: /var/www/html/public
+  - object: /var/www/html/
     pattern: "**"
     type:
       - directory
