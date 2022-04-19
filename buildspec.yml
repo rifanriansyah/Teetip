@@ -25,7 +25,6 @@ phases:
    commands:
      - echo Build started on `date`
      - echo Installing composer deps
-     - cp .env.staging .env
      - composer install
      - npm install
      - composer install
