@@ -1,23 +1,41 @@
 version: 0.2
+phases:
+ install:
+	runtime-versions:
+         php: 7.4
+         nodejs: 12.x
+   commands:
+     - |
+ 	 #Update
+         yum update -y
+         yum install -y libpq-dev libzip-dev
+         yum --enablerepo=remi,epel install php openssl php-common php-curl php-json php-zip php-mysql php-mcrypt php-xml php-mbstring
+         #Install composer
+         php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
+         php composer-setup.php ;
+         php -r "unlink('composer-setup.php');" ;
+         mv composer.phar /usr/local/bin/composer
 
-phases: 
-    install:
-        runtime-versions:
-            nodejs: 10
-        commands:
-            - echo "installing something"
-    pre_build:
-        commands: 
-            - echo "we are in the pre build phase"
-    build:
-        commands:
-            - echo "we are in the build block"
-            - echo "we will run some tests"
-            - grep -Fq "Welcome" index.html
-    post_build:
-        commands:
-            - echo "we are in the post build phase"
-            
-artifacts:
-  files:
-    - '**/*'
+         #Various handy node based dev tools - do you need these during your build? Comment if not.
+         #npm install -g gulp
+         #npm install -g grunt
+         #npm install -g webpack
+
+ build:
+   commands:
+     - echo Build started on `date`
+     - echo Installing composer deps
+     - cp .env.staging .env
+     - composer install
+     - npm install
+     - composer install
+     - php artisan migrate 
+
+ post_build:
+   commands:
+     - echo Build completed on `date`
+     # Do you need to do this? In many cases phpunit will use sqlite or similar to avoid the need for a real DB.
+     # If you don't need it delete it
+     # - /usr/bin/mysql  -u root -e "GRANT ALL ON *.* TO 'test'@'localhost' IDENTIFIED BY '' WITH GRANT OPTION"
+     # - mysqladmin -u test create test
+     - ./vendor/bin/phpunit
