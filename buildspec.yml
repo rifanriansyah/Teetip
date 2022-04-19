@@ -26,8 +26,6 @@ phases:
      - echo Build started on `date`
      - echo Installing composer deps
      - composer install
-     - npm install
-     - composer install
      - php artisan migrate 
 
  post_build:
