@@ -6,7 +6,14 @@ phases:
          nodejs: 12.x
    commands:
      - |
- 	 #Update
+ 	 sudo yum update -y
+         sudo yum install -y libpq-dev libzip-dev
+         sudo yum --enablerepo=remi,epel install php openssl php-common php-curl php-json php-zip php-mysql php-mcrypt php-xml php-mbstring
+         sudo php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
+         sudo php composer-setup.php ;
+         sudo php -r "unlink('composer-setup.php');" ;
+         sudo mv composer.phar /usr/local/bin/composer
+
          #Various handy node based dev tools - do you need these during your build? Comment if not.
          #npm install -g gulp
          #npm install -g grunt
@@ -14,7 +21,9 @@ phases:
 
  build:
    commands:
-     
+     - composer install
+     - php artisan migrate 
+
  post_build:
    commands:
      - echo Build completed on `date`
